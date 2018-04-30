@@ -9,6 +9,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.8/dc.js"></script>
     <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.8/dc.css type="text/css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.js"></script>
     <title>Document</title>
 </head>
 
@@ -18,81 +19,77 @@
     <div id="state-chart"></div>
     <div id="gender-chart"></div>
     <script>
-        let transactionsData = [
-            { "gender": "Male", "name": "Tom", "store": "ACME", "state": "NY", "spend": 100 },
-            { "gender": "Male", "name": "Tom", "store": "Big Co", "state": "NY", "spend": 200 },
-            { "gender": "Male", "name": "Bob", "store": "ACME", "state": "FL", "spend": 150 },
-            { "gender": "Male", "name": "Bob", "store": "ACME", "state": "NY", "spend": 200 },
-            { "gender": "Male", "name": "Bob", "store": "Big Co", "state": "FL", "spend": 75 },
-            { "gender": "Male", "name": "Bob", "store": "Big Co", "state": "NY", "spend": 50 },
-            { "gender": "Female", "name": "Alice", "store": "ACME", "state": "FL", "spend": 200 },
-            { "gender": "Female", "name": "Alice", "store": "Big Co", "state": "NY", "spend": 350 },
-        ];
+        queue()
+            .defer(d3.json, "data/transactions.json")
+            .await(makeCharts);
 
-        let ndx = crossfilter(transactionsData);
+        function makeCharts(error, transactionsData) {
+            let ndx = crossfilter(transactionsData);
 
-        let nameDim = ndx.dimension(dc.pluck('name'));
-        let totalSpend = nameDim.group().reduceSum(dc.pluck('spend'));
-        // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
-        let spendChart = dc.barChart("#spend-chart");
-        spendChart
-            .width(300)
-            .height(150)
-            .dimension(nameDim)
-            .group(totalSpend)
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxisLabel("Person")
-            .yAxis().ticks(4)
+            let nameDim = ndx.dimension(dc.pluck('name'));
+            let totalSpend = nameDim.group().reduceSum(dc.pluck('spend'));
+            // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
+            let spendChart = dc.barChart("#spend-chart");
+            spendChart
+                .width(300)
+                .height(150)
+                .dimension(nameDim)
+                .group(totalSpend)
+                .x(d3.scale.ordinal())
+                .xUnits(dc.units.ordinal)
+                .xAxisLabel("Person")
+                .yAxis().ticks(4)
+
+            dc.renderAll();
+
+            let storeDim = ndx.dimension(dc.pluck('store'));
+            let totalSpendByStore = storeDim.group().reduceSum(dc.pluck('spend'));
+            // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
+            let storeChart = dc.barChart("#store-chart");
+            storeChart
+                .width(300)
+                .height(150)
+                .dimension(storeDim)
+                .group(totalSpendByStore)
+                .x(d3.scale.ordinal())
+                .xUnits(dc.units.ordinal)
+                .xAxisLabel("Store")
+                .yAxis().ticks(4)
+
+            dc.renderAll()
+
+            let stateDim = ndx.dimension(dc.pluck('state'));
+            let totalSpendByState = stateDim.group().reduceSum(dc.pluck('spend'));
+            // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
+            let stateChart = dc.barChart("#state-chart");
+            stateChart
+                .width(300)
+                .height(150)
+                .dimension(stateDim)
+                .group(totalSpendByState)
+                .x(d3.scale.ordinal())
+                .xUnits(dc.units.ordinal)
+                .xAxisLabel("State")
+                .yAxis().ticks(4)
+
+            dc.renderAll()
             
-        dc.renderAll(); 
-        
-        let storeDim = ndx.dimension(dc.pluck('store'));
-        let totalSpendByStore = storeDim.group().reduceSum(dc.pluck('spend'));
-        // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
-        let storeChart = dc.barChart("#store-chart");
-        storeChart
-            .width(300)
-            .height(150)
-            .dimension(storeDim)
-            .group(totalSpendByStore)
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxisLabel("Store")
-            .yAxis().ticks(4)
-            
-        dc.renderAll()
-        
-        let stateDim = ndx.dimension(dc.pluck('state'));
-        let totalSpendByState = stateDim.group().reduceSum(dc.pluck('spend'));
-        // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
-        let stateChart = dc.barChart("#state-chart");
-        stateChart
-            .width(300)
-            .height(150)
-            .dimension(stateDim)
-            .group(totalSpendByState)
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxisLabel("State")
-            .yAxis().ticks(4)
-            
-        dc.renderAll()
-        let genderDim = ndx.dimension(dc.pluck('gender'));
-        let totalSpendByGender = genderDim.group().reduceSum(dc.pluck('spend'));
-        // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
-        let genderChart = dc.barChart("#gender-chart");
-        genderChart
-            .width(300)
-            .height(150)
-            .dimension(genderDim)
-            .group(totalSpendByGender)
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxisLabel("Gender")
-            .yAxis().ticks(4)
-            
-        dc.renderAll()
+            // let genderDim = ndx.dimension(dc.pluck('gender'));
+            // let totalSpendByGender = genderDim.group().reduceSum(dc.pluck('spend'));
+            // // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
+            // let genderChart = dc.barChart("#gender-chart");
+            // genderChart
+            //     .width(300)
+            //     .height(150)
+            //     .dimension(genderDim)
+            //     .group(totalSpendByGender)
+            //     .x(d3.scale.ordinal())
+            //     .xUnits(dc.units.ordinal)
+            //     .xAxisLabel("Gender")
+            //     .yAxis().ticks(4)
+
+            // dc.renderAll()
+        }
     </script>
 </body>
 
