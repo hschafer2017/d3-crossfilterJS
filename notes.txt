@@ -1,0 +1,4 @@
+SVG - scalable vector graphics
+SVG tags create an SVG viewport 
+for SVG, (x = 0, y= 0) is in the top left, not the bottom left as on a traditional graph. 
+to make a color, use a 'fill' in the tag, to add a border, use stroke = "color" stroke-width = "1"
