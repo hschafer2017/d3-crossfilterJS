@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>D3 and SVG</h1>
+    <div id="svg-goes-here">
+    </div>
+    <script>
+        let h = 600;
+        let w = 600;
+        let barPadding = 1;
+
+        let dataSet = [350, 200, 190, 110, 50, 199, 382, 294, 501, 280, 215, 189, 164, 294, 241, 90, 77, 318, 265, 307]
+        let scale = d3.scale.linear()
+            .domain([0,550])
+            .range([0,500])
+        
+        let colWidth = w / dataSet.length;
+        let barWidth = colWidth - barPadding;
+
+        let mySVG = d3.select("#svg-goes-here")
+            .append("svg")
+            .attr("height", h)
+            .attr("width", w);
+
+        mySVG.selectAll("rect")
+            .data(dataSet)
+            .enter()
+            .append("rect")
+            .attr("x", function(d, i) {
+                return i * (w/dataSet.length
+            );})
+            .attr("y", function(d) {
+                return h - scale(d);
+            })
+            .attr("height", function(d) {
+                return scale(d);
+            })
+            .attr("width", barWidth);
+
+        mySVG.selectAll("text")
+            .data(dataSet)
+            .enter()
+            .append("text")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11px")
+            .attr("text-anchor", "middle")
+            .attr("fill", "white")
+            .text(function(d) {
+                return d;
+            })
+            .attr("x", function(d, i) {
+                return i * colWidth + barWidth/2;
+            })
+            .attr("y", function(d) {
+                return h - scale(d) + 14;
+            });
+    </script>
+</body>
+
+</html>
