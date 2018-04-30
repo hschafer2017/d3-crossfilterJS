@@ -5,3 +5,7 @@ to make a color, use a 'fill' in the tag, to add a border, use stroke = "color" 
 to make the graph upright, you have to take the height of the tallest one, subtracted by the height of that bar, that is your new y value. 
 
 domain is the max value you have in the data set 
+
+
+Getting data from an external source: 
+Make a new directory 
