@@ -14,10 +14,12 @@
 </head>
 
 <body>
+    <a href = "javascript:dc.filterAll(); dc.renderAll();"><strong>RESET ALL</strong></a>
     <div id="spend-chart"></div>
     <div id="store-chart"></div>
     <div id="state-chart"></div>
     <div id="gender-chart"></div>
+    <div id="date-chart"></div>
     <script>
         queue()
             .defer(d3.json, "data/transactions.json")
@@ -25,6 +27,34 @@
 
         function makeCharts(error, transactionsData) {
             let ndx = crossfilter(transactionsData);
+
+            let parseDate = d3.time.format("%d/%m/%Y").parse;
+
+            transactionsData.forEach(function(d) {
+                d.date = parseDate(d.date);
+                console.log(d.date);
+            });
+
+            let dateDim = ndx.dimension(dc.pluck('date'));
+            let totalDate = dateDim.group().reduceSum(dc.pluck('spend'));
+            // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
+            let minDate = dateDim.bottom(1)[0].date;
+            console.log(dateDim.bottom(1));
+            let maxDate = dateDim.top(1)[0].date;
+
+            let dateChart = dc.lineChart("#date-chart");
+            dateChart
+                .width(1000)
+                .height(250)
+                .dimension(dateDim)
+                .group(totalDate)
+                .x(d3.time.scale().domain([minDate, maxDate]))
+                .xAxisLabel("Month")
+
+
+            dc.renderAll();
+
+            // NAME CHART
 
             let nameDim = ndx.dimension(dc.pluck('name'));
             let totalSpend = nameDim.group().reduceSum(dc.pluck('spend'));
@@ -42,6 +72,8 @@
 
             dc.renderAll();
 
+            // STORE CHART
+
             let storeDim = ndx.dimension(dc.pluck('store'));
             let totalSpendByStore = storeDim.group().reduceSum(dc.pluck('spend'));
             // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
@@ -58,22 +90,24 @@
 
             dc.renderAll()
 
+
+            // STATE CHART 
             let stateDim = ndx.dimension(dc.pluck('state'));
             let totalSpendByState = stateDim.group().reduceSum(dc.pluck('spend'));
             // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
-            let stateChart = dc.barChart("#state-chart");
+            let stateChart = dc.pieChart("#state-chart");
             stateChart
-                .width(300)
-                .height(150)
+                .radius(100)
+                .height(300)
                 .dimension(stateDim)
-                .group(totalSpendByState)
-                .x(d3.scale.ordinal())
-                .xUnits(dc.units.ordinal)
-                .xAxisLabel("State")
-                .yAxis().ticks(4)
+                .group(totalSpendByState);
+            // .x(d3.scale.ordinal())
+            // .xUnits(dc.units.ordinal)
+            // .xAxisLabel("State")
+            // .yAxis().ticks(4)
 
             dc.renderAll()
-            
+
             // let genderDim = ndx.dimension(dc.pluck('gender'));
             // let totalSpendByGender = genderDim.group().reduceSum(dc.pluck('spend'));
             // // we've reduced, getting rid of data we don't need, and summed up the spend based on the dimension that we sent in. Total spend now contains a group. Returns an array of objects. Purpose of nameDim is that the dimension forms the x-axis. We need a dimension to group on. MUST UNDERSTAND RELATIONSHIP BETWEEN DIMENSION AND GROUP 
