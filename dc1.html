@@ -29,7 +29,7 @@
             let ndx = crossfilter(transactionsData);
 
             let parseDate = d3.time.format("%d/%m/%Y").parse;
-
+            
             transactionsData.forEach(function(d) {
                 d.date = parseDate(d.date);
                 console.log(d.date);
@@ -67,6 +67,7 @@
                 .group(totalSpend)
                 .x(d3.scale.ordinal())
                 .xUnits(dc.units.ordinal)
+                .ordinalColors(['indigo', 'pink'])
                 .xAxisLabel("Person")
                 .yAxis().ticks(4)
 
