@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,20 +11,47 @@
     <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.8/dc.css type="text/css" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.js"></script>
     <title>Document</title>
+    
+    <style type="text/css">
+        .text {
+            text-align:center;
+        }
+    </style>
 </head>
+
 <body>
     <div>
         <h3>Data Challenge</h3>
-        <h3> Average salary by Gender</h3>
-    <div id="first-chart">
+        <a href = "javascript:dc.filterAll(); dc.renderAll();"><strong>RESET ALL</strong></a>
+        <div id="first-chart">
+            <h3 class="text"> Average salary by Gender</h3>
         </div>
+        
+        <div id="first1-chart">
+            <h3 class="text"> Average Years of Service by Gender</h3>
+        </div>
+        
+        <div id="first2-chart">
+            <h3 class="text"> Average Salary by Discipline</h3>
+        </div>
+        
+        <div id="first3-chart">
+            <h3 class="text"> Average Salary by Year of Service</h3>
+        </div>
+        
         <div id="second-chart">
-            <h3>Breakdown by title</h3>
+            <h3 class="text">Breakdown by title</h3>
         </div>
+        
         <div id="third-chart">
-            <h3>Breakdown by discipline</h3>
+            <h3 class= "text">Breakdown by discipline</h3>
         </div>
+        <div id="composite-chart">
+            <h3 class= "text">The effect of years of service on salary by position.</h3>
         </div>
+        
+    </div>
     <script type="text/javascript" src="datachallenge.js"></script>
 </body>
+
 </html>

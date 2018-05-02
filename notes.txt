@@ -9,3 +9,52 @@ domain is the max value you have in the data set
 
 Getting data from an external source: 
 Make a new directory 
+
+
+you can use reduceCount to get the count of the data that you're using. 
+
+function reduceInit() {
+    return {count: 0, total:0, average:0};
+    }
+
+let totalSalary = yrsService Dim.group().reduce( reduceAdd (p,v), reduceRemove(p,v), reduceInit
+
+
+where there is more data being added to the filter, you need reduceAdd. When things are being taken out of/compressed you need reduceRemove. 
+
+var groupSalary = totalSalary.group().reduce(
+        function(p, v) {
+            p.count++;
+            p.total  += +v["salary"];
+            p.average = p.total / p.count;
+            return p;
+        },
+        function(p, v) {
+            p.count--;
+            if (p.count == 0) {
+                p.total = 0;
+                p.average = 0;
+            }
+            else {
+                p.total -= -v["salary"];
+                p.average = p.total / p.count;
+            }
+            return p;
+        },
+        function() {
+            return { count: 0, total: 0, average: 0 };
+        }
+    );
+    
+    plus signs after means 'remember original value, increment the variable, and when we call it, remember the original value. (x++) 
+    if we do a pre-increment (++x), then it will stay added
+    
+    You have to have "reduceAdd" and then "reduceRemove" when finding the average. 
+    
+    To get the values out of it, we use ".valueAccessor(function(p) {return p.value.average;})
+    
+    1. the order of functions: add, remove, init
+    2. p= object removed from init 
+    3. v= copy of the current record 
+    4. use valueAccessor to get a value from the custom reduce functions 
+    5. make sure to return p; at the end of the add and remove functions 
