@@ -6,23 +6,6 @@ queue()
 function makeCharts(error, SalariesData) {
     let ndx = crossfilter(SalariesData);
 
-    // let genderDim = ndx.dimension(dc.pluck('sex'));
-    // let totalSalary2 = genderDim.group().reduceSum(dc.pluck('salary'));
-    // let salaryChart = dc.barChart("#first-chart");
-    // salaryChart
-    //     .width(300)
-    //     .height(500)
-    //     .margins({ top: 0, right: 0, bottom: 50, left: 100 })
-    //     .dimension(genderDim)
-    //     .group(totalSalary)
-    //     .x(d3.scale.ordinal())
-    //     .xUnits(dc.units.ordinal)
-    //     .ordinalColors(['indigo'])
-    //     .xAxisLabel("Gender")
-    //     .yAxis().ticks(5);
-
-
-
     var genderDim = ndx.dimension(dc.pluck('salary'));
     var totalSalary = ndx.dimension(dc.pluck('sex'));
     // return +d ['salary'];
@@ -51,11 +34,12 @@ function makeCharts(error, SalariesData) {
     );
 
     var personColors = d3.scale.ordinal()
-        .range(["red", "green", "blue"]);
+        .range(["purple", "orange",]);
     var chart = dc.barChart("#first-chart");
     chart
         .width(500)
         .height(300)
+        .margins ({top:0, right:0, bottom:50, left:50})
         .dimension(genderDim)
         .group(groupSalary)
         .valueAccessor(function(p) {
@@ -83,7 +67,7 @@ function makeCharts(error, SalariesData) {
     let serviceChart = dc.pieChart("#second-chart");
     serviceChart
         .radius(100)
-        .height(500)
+        .height(300)
         .dimension(serviceDim)
         .group(totalYears)
         .ordinalColors(['lemonchiffon', 'indigo', 'pink', 'red', 'green']);
@@ -93,7 +77,7 @@ function makeCharts(error, SalariesData) {
     let disChart = dc.pieChart("#third-chart");
     disChart
         .radius(100)
-        .height(500)
+        .height(300)
         .dimension(disDim)
         .group(totalDis)
         .ordinalColors(['red', 'green']);
